@@ -1,23 +1,10 @@
 ﻿namespace CleanArchitectureDDD.Domain.ValueObjects;
 
-public class Prefix : ValueObject
+public class Prefix(string code) : ValueObject
 {
-    static Prefix()
-    {
-    }
-
-    private Prefix()
-    {
-    }
-
-    private Prefix(string code)
-    {
-        Code = code;
-    }
-
     public static Prefix From(string code)
     {
-        var prefix = new Prefix { Code = code };
+        var prefix = new Prefix(code);
 
         if (!SupportedLanguages.Contains(prefix))
         {
@@ -31,9 +18,9 @@ public class Prefix : ValueObject
 
     public static Prefix Español => new("ESP");
 
-    public static Prefix Chinese => new("CHN");
+    public static Prefix Portugues => new("POR");
 
-    public string Code { get; private set; } = "ENG";
+    public string Code { get; private set; } = string.IsNullOrWhiteSpace(code) ? "ENG" : code;
 
     public static implicit operator string(Prefix prefix)
     {
@@ -56,7 +43,7 @@ public class Prefix : ValueObject
         {
             yield return English;
             yield return Español;
-            yield return Chinese;
+            yield return Portugues;
         }
     }
 

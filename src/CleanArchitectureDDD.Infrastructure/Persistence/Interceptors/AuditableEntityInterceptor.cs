@@ -6,16 +6,14 @@ using Microsoft.EntityFrameworkCore.Diagnostics;
 
 namespace CleanArchitectureDDD.Infrastructure.Persistence.Interceptors;
 
-public class AuditableEntitySaveChangesInterceptor : SaveChangesInterceptor
+public class AuditableEntityInterceptor : SaveChangesInterceptor
 {
-    private readonly ICurrentUserService _currentUserService;
+    private readonly IUser _user;
     private readonly IDateTime _dateTime;
 
-    public AuditableEntitySaveChangesInterceptor(
-        ICurrentUserService currentUserService,
-        IDateTime dateTime)
+    public AuditableEntityInterceptor(IUser user, IDateTime dateTime)
     {
-        _currentUserService = currentUserService;
+        _user = user;
         _dateTime = dateTime;
     }
 
@@ -39,19 +37,24 @@ public class AuditableEntitySaveChangesInterceptor : SaveChangesInterceptor
 
         foreach (var entry in context.ChangeTracker.Entries<AuditableEntity>())
         {
-            if (entry.State == EntityState.Added)
+            if (entry.State is EntityState.Added or EntityState.Modified || entry.HasChangedOwnedEntities())
             {
-                entry.Entity.CdUserCreatorAud = _currentUserService.UserId;
-                entry.Entity.DtUserCreationAud = _dateTime.Now;
-                entry.Entity.IsLogicalDelete = 0;
-                entry.Entity.IsValidRecord = 1;
-                entry.Entity.IsSync = 0;
-            }
+                var utcNow = _dateTime.Now;
+                if (entry.State == EntityState.Added)
+                {
+                    entry.Entity.IdCreatedAud = _user.Id;
+                    entry.Entity.DtCreatedAud = utcNow;
+                    entry.Entity.IsLogicalDelete = 0;
+                }
 
-            if (entry.State == EntityState.Added || entry.State == EntityState.Modified || entry.HasChangedOwnedEntities())
-            {
-                entry.Entity.CdUserUpdateAud = _currentUserService.UserId;
-                entry.Entity.DtUserUpdateAud = _dateTime.Now;
+                entry.Entity.IdUpdatedAud = _user.Id;
+                entry.Entity.DtUpdatedAud = utcNow;
+
+                if (entry.Entity.IsLogicalDelete == 1)
+                {
+                    entry.Entity.IdDeletedAud = _user.Id;
+                    entry.Entity.DtDeletedAud = utcNow;
+                }
             }
         }
     }

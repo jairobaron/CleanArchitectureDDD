@@ -1,14 +1,11 @@
-﻿using System.Threading.Tasks;
-using NUnit.Framework;
-using FluentAssertions;
-using CleanArchitectureDDD.Application.Common.Models;
+﻿using CleanArchitectureDDD.Application.Common.Models;
 using CleanArchitectureDDD.Application.Languages.Queries.GetLanguages;
 using CleanArchitectureDDD.Domain.Entities;
 
-namespace CleanArchitectureDDD.Application.IntegrationTests.Languages.Queries;
+namespace CleanArchitectureDDD.Application.FunctionalTests.Languages.Queries;
 
 using static Testing;
-public class GetLanguagesWithPaginationTests : TestBase
+public class GetLanguagesWithPaginationTests : BaseTestFixture
 {
     [Test]
     public async Task ShouldReturnAllLanguagesWithPagination()

@@ -1,6 +1,4 @@
-﻿using FluentValidation;
-
-namespace CleanArchitectureDDD.Application.Languages.Queries.GetLanguages;
+﻿namespace CleanArchitectureDDD.Application.Languages.Queries.GetLanguages;
 
 public class GetLanguagesWithPaginationQueryValidator : AbstractValidator<GetLanguagesWithPaginationQuery>
 {

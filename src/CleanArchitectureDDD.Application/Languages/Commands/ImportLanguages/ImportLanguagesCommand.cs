@@ -1,6 +1,4 @@
-﻿using AutoMapper;
-using MediatR;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using CleanArchitectureDDD.Application.Common.Interfaces;
 using CleanArchitectureDDD.Domain.Entities;
 

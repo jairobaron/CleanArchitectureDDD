@@ -5,7 +5,7 @@ namespace CleanArchitectureDDD.API.Services;
 /// <summary>
 /// Class Get Current User
 /// </summary>
-public class CurrentUserService : ICurrentUserService
+public class CurrentUserService : IUser
 {
     private readonly IHttpContextAccessor _httpContextAccessor;
     /// <summary>
@@ -20,5 +20,5 @@ public class CurrentUserService : ICurrentUserService
     /// Get User Id of current user
     /// </summary>
     //public string? UserId => _httpContextAccessor.HttpContext?.User?.FindFirstValue(ClaimTypes.NameIdentifier);
-    public long UserId => long.Parse(_httpContextAccessor.HttpContext?.User?.FindFirstValue(ClaimTypes.Sid)??"1");
+    public string Id => _httpContextAccessor.HttpContext?.User?.FindFirstValue(ClaimTypes.Sid) ?? Guid.NewGuid().ToString();
 }

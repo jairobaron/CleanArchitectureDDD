@@ -1,17 +1,15 @@
 ﻿using CleanArchitectureDDD.Application.Common.Interfaces;
 using MediatR.Pipeline;
 using Microsoft.Extensions.Logging;
-using MediatR;
-using System.Reflection;
 
 namespace CleanArchitectureDDD.Application.Common.Behaviours;
 
 public class LoggingBehaviour<TRequest> : IRequestPreProcessor<TRequest> where TRequest : notnull
 {
     private readonly ILogger _logger;
-    private readonly ICurrentUserService _currentUserService;
+    private readonly IUser _currentUserService;
 
-    public LoggingBehaviour(ILogger<TRequest> logger, ICurrentUserService currentUserService)
+    public LoggingBehaviour(ILogger<TRequest> logger, IUser currentUserService)
     {
         _logger = logger;
         _currentUserService = currentUserService;
@@ -20,7 +18,7 @@ public class LoggingBehaviour<TRequest> : IRequestPreProcessor<TRequest> where T
     public async Task Process(TRequest request, CancellationToken cancellationToken)
     {
         var requestName = typeof(TRequest).Name;
-        var userId = _currentUserService.UserId;
+        var userId = _currentUserService.Id;
 
         //Request
         using(_logger.BeginScope("{ServiceName}", requestName))

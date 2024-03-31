@@ -1,11 +1,16 @@
-﻿using CleanArchitectureDDD.Application.Common.Mappings;
-using CleanArchitectureDDD.Domain.Entities;
+﻿using CleanArchitectureDDD.Domain.Entities;
 
 namespace CleanArchitectureDDD.Application.Languages.Commands.ImportLanguages;
 
-public class LanguagesRecord : IMapFrom<Language>
+public class LanguagesRecord
 {
     public string? DsLanguage { get; set; }
-
     public string? DsPrefix { get; set; }
+    public class Mapping : Profile
+    {
+        public Mapping() 
+        {
+            CreateMap<Language, LanguagesRecord>();
+        }
+    }
 }

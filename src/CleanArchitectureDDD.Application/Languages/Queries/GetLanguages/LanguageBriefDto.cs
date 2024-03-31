@@ -1,11 +1,17 @@
-﻿using CleanArchitectureDDD.Application.Common.Mappings;
-using CleanArchitectureDDD.Domain.Entities;
+﻿using CleanArchitectureDDD.Domain.Entities;
 
 namespace CleanArchitectureDDD.Application.Languages.Queries.GetLanguages;
 
-public class LanguageBriefDto : IMapFrom<Language>
+public class LanguageBriefDto
 {
-    public long CdLanguage { get; set; }
+    public string? CdLanguage { get; set; }
     public string? DsLanguage { get; set; }
     public string? DsPrefix { get; set; }
+    private class Mapping : Profile
+    {
+        public Mapping() 
+        {
+            CreateMap<Language, LanguageBriefDto>();
+        }
+    }
 }

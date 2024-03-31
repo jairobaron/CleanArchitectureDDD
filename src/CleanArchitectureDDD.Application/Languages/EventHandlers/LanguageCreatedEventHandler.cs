@@ -1,5 +1,4 @@
 ﻿using CleanArchitectureDDD.Domain.Events;
-using MediatR;
 using Microsoft.Extensions.Logging;
 
 namespace CleanArchitectureDDD.Application.Languages.EventHandlers;

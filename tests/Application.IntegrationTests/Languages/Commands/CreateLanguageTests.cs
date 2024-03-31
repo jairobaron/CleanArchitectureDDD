@@ -1,16 +1,12 @@
 ﻿using CleanArchitectureDDD.Application.Common.Exceptions;
 using CleanArchitectureDDD.Application.Languages.Commands.CreateLanguage;
-using FluentAssertions;
-using NUnit.Framework;
-using System.Threading.Tasks;
 using CleanArchitectureDDD.Domain.Entities;
-using System;
 
-namespace CleanArchitectureDDD.Application.IntegrationTests.Languages.Commands;
+namespace CleanArchitectureDDD.Application.FunctionalTests.Languages.Commands;
 
 using static Testing;
 
-public class CreateLanguageTests : TestBase
+public class CreateLanguageTests : BaseTestFixture
 {
     [Test]
     public async Task ShouldRequireMinimumFields()
@@ -55,9 +51,9 @@ public class CreateLanguageTests : TestBase
 
         language.Should().NotBeNull();
         language!.DsLanguage.Should().Be(command.DsLanguage);
-        language.CdUserCreatorAud.Should().Be(userId);
-        language.DtUserCreationAud.Should().BeCloseTo(DateTime.Now, TimeSpan.FromMilliseconds(10000));
-        language.CdUserUpdateAud.Should().Be(userId);
-        language.DtUserUpdateAud.Should().BeCloseTo(DateTime.Now, TimeSpan.FromMilliseconds(10000));
+        language.IdCreatedAud.Should().Be(userId);
+        language.DtCreatedAud.Should().BeCloseTo(DateTime.Now, TimeSpan.FromMilliseconds(10000));
+        language.IdUpdatedAud.Should().Be(userId);
+        language.DtUpdatedAud.Should().BeCloseTo(DateTime.Now, TimeSpan.FromMilliseconds(10000));
     }
 }

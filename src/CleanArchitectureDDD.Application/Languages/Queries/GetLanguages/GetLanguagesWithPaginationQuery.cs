@@ -1,9 +1,6 @@
-﻿using AutoMapper;
-using AutoMapper.QueryableExtensions;
-using CleanArchitectureDDD.Application.Common.Interfaces;
+﻿using CleanArchitectureDDD.Application.Common.Interfaces;
 using CleanArchitectureDDD.Application.Common.Mappings;
 using CleanArchitectureDDD.Application.Common.Models;
-using MediatR;
 
 namespace CleanArchitectureDDD.Application.Languages.Queries.GetLanguages;
 

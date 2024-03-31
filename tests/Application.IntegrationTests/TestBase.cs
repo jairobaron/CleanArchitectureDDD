@@ -1,7 +1,4 @@
-﻿using System.Threading.Tasks;
-using NUnit.Framework;
-
-namespace CleanArchitectureDDD.Application.IntegrationTests;
+﻿namespace CleanArchitectureDDD.Application.FunctionalTests;
 
 using static Testing;
 

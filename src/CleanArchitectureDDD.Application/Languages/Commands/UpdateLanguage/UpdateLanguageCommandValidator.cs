@@ -1,6 +1,4 @@
-﻿using FluentValidation;
-using Microsoft.EntityFrameworkCore;
-using CleanArchitectureDDD.Application.Common.Interfaces;
+﻿using CleanArchitectureDDD.Application.Common.Interfaces;
 
 namespace CleanArchitectureDDD.Application.Languages.Commands.UpdateLanguage;
 
@@ -24,7 +22,7 @@ public class UpdateLanguageCommandValidator : AbstractValidator<UpdateLanguageCo
     public async Task<bool> BeUniqueTitle(UpdateLanguageCommand model, string DsLanguage, CancellationToken cancellationToken)
     {
         return await _context.TbMtLanguage
-            .Where(x => x.CdLanguage != model.CdLanguage)
+            .Where(x => x.Id != model.Id)
             .AllAsync(x => x.DsLanguage != DsLanguage, cancellationToken);
     }
 }

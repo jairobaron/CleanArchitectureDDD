@@ -2,17 +2,11 @@
 
 public abstract class AuditableEntity : BaseEntity
 {
-    public DateTime DtUserCreationAud { get; set; }
-
-    public long CdUserCreatorAud { get; set; }
-
-    public DateTime? DtUserUpdateAud { get; set; }
-
-    public long? CdUserUpdateAud { get; set; }
-
+    public DateTimeOffset DtCreatedAud { get; set; }
+    public string? IdCreatedAud { get; set; }
+    public DateTimeOffset? DtUpdatedAud { get; set; }
+    public string? IdUpdatedAud { get; set; }
+    public DateTimeOffset? DtDeletedAud { get; set; }
+    public string? IdDeletedAud { get; set; }
     public int? IsLogicalDelete { get; set; }
-
-    public int? IsValidRecord { get; set; }
-
-    public int? IsSync { get; set; }
 }

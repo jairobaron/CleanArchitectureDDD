@@ -1,5 +1,9 @@
-﻿using System.Runtime.Serialization;
+﻿using System.Reflection;
+using System.Runtime.Serialization;
+using System.Runtime.CompilerServices;
 using AutoMapper;
+using CleanArchitectureDDD.Application.Common.Interfaces;
+using CleanArchitectureDDD.Application.Common.Models;
 using CleanArchitectureDDD.Application.Common.Mappings;
 using CleanArchitectureDDD.Application.Languages.Queries;
 using CleanArchitectureDDD.Domain.Entities;
@@ -16,7 +20,7 @@ public class MappingTests
     public MappingTests()
     {
         _configuration = new MapperConfiguration(config =>
-            config.AddProfile<MappingProfile>());
+            config.AddMaps(Assembly.GetAssembly(typeof(IConfigDbContext))));
 
         _mapper = _configuration.CreateMapper();
     }
@@ -41,6 +45,6 @@ public class MappingTests
             return Activator.CreateInstance(type)!;
 
         // Type without parameterless constructor
-        return FormatterServices.GetUninitializedObject(type);
+        return RuntimeHelpers.GetUninitializedObject(type);
     }
 }

@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace CleanArchitectureDDD.Domain.Common;
+﻿namespace CleanArchitectureDDD.Domain.Common;
 
 public abstract class ValueObject
 {
@@ -38,8 +32,13 @@ public abstract class ValueObject
 
     public override int GetHashCode()
     {
-        return GetEqualityComponents()
-            .Select(x => x != null ? x.GetHashCode() : 0)
-            .Aggregate((x, y) => x ^ y);
+        var hash = new HashCode();
+
+        foreach (var component in GetEqualityComponents())
+        {
+            hash.Add(component);
+        }
+
+        return hash.ToHashCode();
     }
 }

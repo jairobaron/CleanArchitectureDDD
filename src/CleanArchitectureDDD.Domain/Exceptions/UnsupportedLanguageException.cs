@@ -1,15 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿namespace CleanArchitectureDDD.Domain.Exceptions;
 
-namespace CleanArchitectureDDD.Domain.Exceptions;
-
-public class UnsupportedLanguageException : Exception
+public class UnsupportedLanguageException(string code) : Exception($"Language \"{code}\" is unsupported.")
 {
-    public UnsupportedLanguageException(string code)
-        : base($"Language \"{code}\" is unsupported.")
-    {
-    }
 }

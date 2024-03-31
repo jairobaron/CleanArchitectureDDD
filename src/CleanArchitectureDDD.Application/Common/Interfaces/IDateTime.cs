@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace CleanArchitectureDDD.Application.Common.Interfaces;
+﻿namespace CleanArchitectureDDD.Application.Common.Interfaces;
 
 public interface IDateTime
 {
-    DateTime Now { get; }
+    DateTimeOffset Now { get; }
 }

@@ -9,11 +9,7 @@ using Microsoft.AspNetCore.Routing;
 using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using Microsoft.AspNetCore.Mvc;
-using System.Text.Json;
-using CleanArchitectureDDD.Infrastructure.Identity;
 using CleanArchitectureDDD.Infrastructure.Files;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Authentication;
 using CleanArchitectureDDD.Application.Common.Security;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
@@ -23,13 +19,13 @@ using Newtonsoft.Json;
 using Microsoft.OpenApi.Models;
 using System.Reflection;
 using App.Metrics;
-using Microsoft.Extensions.Logging;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 
 namespace Microsoft.Extensions.DependencyInjection;
 /// <summary>
 /// Ifrastructure Dependency Injection
 /// </summary>
-public static class ConfigureServices
+public static class DependencyInjection
 {
     /// <summary>
     /// Configure services on infrastructure layer
@@ -37,12 +33,8 @@ public static class ConfigureServices
     /// <param name="services"></param>
     /// <param name="configuration"></param>
     /// <returns></returns>
-    public static IServiceCollection AddInfrastructureServices(
-        this IServiceCollection services, 
-        IConfiguration configuration)
+    public static IServiceCollection AddInfrastructureServices(this IServiceCollection services, IConfiguration configuration)
     {
-        services.AddScoped<AuditableEntitySaveChangesInterceptor>();
-
         //Add the service required for using options. 
         services.AddCors(options =>
         {
@@ -77,23 +69,29 @@ public static class ConfigureServices
                 options.JsonSerializerOptions.PropertyNamingPolicy = null;
             });
 
-        if (configuration.GetValue<bool>("UseInMemoryDatabase"))
+        var connectionString = configuration.GetConnectionString("Default");
+        Guard.Against.Null(connectionString, message: "Connection string 'Default' not found.");
+
+        services.AddScoped<ISaveChangesInterceptor, AuditableEntityInterceptor>();
+        services.AddScoped<ISaveChangesInterceptor, DispatchDomainEventsInterceptor>();
+
+        services.AddDbContext<ConfigDbContext>((sp, options) =>
         {
-            services.AddDbContext<ConfigDbContext>(options =>
-                options.UseInMemoryDatabase("config_db"));
-        }
-        else
-        {
-            services.AddDbContext<ConfigDbContext>(options =>
-                options.UseLazyLoadingProxies().UseSqlServer(   
-                    configuration.GetConnectionString("Default"),                
-                    sqlOptions => sqlOptions
-                        .MigrationsAssembly(typeof(ConfigDbContext).Assembly.FullName)
-                        .EnableRetryOnFailure(
-                            maxRetryCount: 10,
-                            maxRetryDelay: TimeSpan.FromSeconds(30),
-                            errorNumbersToAdd: null)));
-        }       
+            options.AddInterceptors(sp.GetServices<ISaveChangesInterceptor>());
+
+            #if (UseSQLite)
+                options.UseSqlite(connectionString);
+            #else
+            options.UseLazyLoadingProxies().UseSqlServer(
+                configuration.GetConnectionString(connectionString),
+                sqlOptions => sqlOptions
+                    .MigrationsAssembly(typeof(ConfigDbContext).Assembly.FullName)
+                    .EnableRetryOnFailure(
+                        maxRetryCount: 10,
+                        maxRetryDelay: TimeSpan.FromSeconds(30),
+                        errorNumbersToAdd: null));
+            #endif
+        });
 
         services.AddScoped<IConfigDbContext>(provider => provider.GetRequiredService<ConfigDbContext>());
 

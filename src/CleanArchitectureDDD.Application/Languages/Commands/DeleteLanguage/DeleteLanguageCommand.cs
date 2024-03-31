@@ -1,14 +1,9 @@
-﻿using CleanArchitectureDDD.Application.Common.Exceptions;
-using CleanArchitectureDDD.Application.Common.Interfaces;
-using CleanArchitectureDDD.Domain.Entities;
-using MediatR;
+﻿using CleanArchitectureDDD.Application.Common.Interfaces;
+using CleanArchitectureDDD.Domain.Events;
 
 namespace CleanArchitectureDDD.Application.Languages.Commands.DeleteLanguage;
 
-public record DeleteLanguageCommand : IRequest
-{
-    public long CdLanguage { get; set; }
-}
+public record DeleteLanguageCommand(Guid Id) : IRequest;
 
 public class DeleteLanguageCommandHandler : IRequestHandler<DeleteLanguageCommand>
 {
@@ -19,19 +14,16 @@ public class DeleteLanguageCommandHandler : IRequestHandler<DeleteLanguageComman
         _context = context;
     }
 
-    public async Task<Unit> Handle(DeleteLanguageCommand request, CancellationToken cancellationToken)
+    public async Task Handle(DeleteLanguageCommand request, CancellationToken cancellationToken)
     {
-        var entity = await _context.TbMtLanguage.FindAsync(new object[] { request.CdLanguage }, cancellationToken);
+        var entity = await _context.TbMtLanguage.FindAsync(new object[] { request.Id }, cancellationToken);
 
-        if (entity == null)
-        {
-            throw new NotFoundException(nameof(Language), request.CdLanguage);
-        }
+        Guard.Against.NotFound(request.Id, entity);
 
         entity.IsLogicalDelete = 1;
 
-        await _context.SaveChangesAsync(cancellationToken);
+        entity.AddDomainEvent(new LanguageDeletedEvent(entity));
 
-        return Unit.Value;
+        await _context.SaveChangesAsync(cancellationToken);
     }
 }

@@ -1,23 +1,20 @@
-﻿using System;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Linq;
 using CleanArchitectureDDD.Application.Common.Exceptions;
 using CleanArchitectureDDD.Application.Languages.Commands.CreateLanguage;
 using CleanArchitectureDDD.Application.Languages.Commands.UpdateLanguage;
 using CleanArchitectureDDD.Domain.Entities;
-using FluentAssertions;
-using NUnit.Framework;
 
-namespace CleanArchitectureDDD.Application.IntegrationTests.Languages.Commands;
+namespace CleanArchitectureDDD.Application.FunctionalTests.Languages.Commands;
 
 using static Testing;
+using NotFoundException = Common.Exceptions.NotFoundException;
 
-public class UpdateLanguageTests : TestBase
+public class UpdateLanguageTests : BaseTestFixture
 {
     [Test]
     public async Task ShouldRequireValidLanguageId()
     {
-        var command = new UpdateLanguageCommand { CdLanguage = 9999, DsLanguage = "English", DsPrefix = "ENG" };
+        var command = new UpdateLanguageCommand { Id = Guid.NewGuid(), DsLanguage = "English", DsPrefix = "ENG" };
         await FluentActions.Invoking(() => SendAsync(command)).Should().ThrowAsync<NotFoundException>();
     }
 
@@ -38,7 +35,7 @@ public class UpdateLanguageTests : TestBase
 
         var command = new UpdateLanguageCommand
         {
-            CdLanguage = languageId,
+            Id = languageId,
             DsLanguage = "Spanish",
             DsPrefix = "ESP"
         };
@@ -62,7 +59,7 @@ public class UpdateLanguageTests : TestBase
 
         var command = new UpdateLanguageCommand
         {
-            CdLanguage = languageId,
+            Id = languageId,
             DsLanguage = "Chinese",
             DsPrefix = "CHN"
         };
@@ -73,9 +70,9 @@ public class UpdateLanguageTests : TestBase
 
         language.Should().NotBeNull();
         language!.DsLanguage.Should().Be(command.DsLanguage);
-        language.CdUserUpdateAud.Should().NotBeNull();
-        language.CdUserUpdateAud.Should().Be(userId);
-        language.DtUserUpdateAud.Should().NotBeNull();
-        language.DtUserUpdateAud.Should().BeCloseTo(DateTime.Now, TimeSpan.FromMilliseconds(10000));
+        language.IdUpdatedAud.Should().NotBeNull();
+        language.IdUpdatedAud.Should().Be(userId);
+        language.DtUpdatedAud.Should().NotBeNull();
+        language.DtUpdatedAud.Should().BeCloseTo(DateTime.Now, TimeSpan.FromMilliseconds(10000));
     }
 }

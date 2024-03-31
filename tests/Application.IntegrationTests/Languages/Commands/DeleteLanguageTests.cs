@@ -1,24 +1,18 @@
-﻿using System;
-using System.Linq;
-using System.Threading.Tasks;
-using CleanArchitectureDDD.Application.Common.Exceptions;
-using CleanArchitectureDDD.Application.Languages.Commands.CreateLanguage;
-using CleanArchitectureDDD.Application.Languages.Commands.UpdateLanguage;
+﻿using CleanArchitectureDDD.Application.Languages.Commands.CreateLanguage;
 using CleanArchitectureDDD.Domain.Entities;
-using FluentAssertions;
-using NUnit.Framework;
 using CleanArchitectureDDD.Application.Languages.Commands.DeleteLanguage;
 
-namespace CleanArchitectureDDD.Application.IntegrationTests.Languages.Commands;
+namespace CleanArchitectureDDD.Application.FunctionalTests.Languages.Commands;
 
 using static Testing;
+using NotFoundException = Common.Exceptions.NotFoundException;
 
-public class DeleteLanguageTests : TestBase
+public class DeleteLanguageTests : BaseTestFixture
 {
     [Test]
     public async Task ShouldRequireValidLanguageId()
     {
-        var command = new DeleteLanguageCommand { CdLanguage = 9999 };
+        var command = new DeleteLanguageCommand(Guid.NewGuid());
         await FluentActions.Invoking(() => SendAsync(command)).Should().ThrowAsync<NotFoundException>();
     }
 
@@ -33,10 +27,7 @@ public class DeleteLanguageTests : TestBase
             DsPrefix =  "ENG"
         });
 
-        var command = new DeleteLanguageCommand
-        {
-            CdLanguage = languageId
-        };
+        var command = new DeleteLanguageCommand(languageId);
 
         await SendAsync(command);
 
@@ -44,9 +35,9 @@ public class DeleteLanguageTests : TestBase
 
         language.Should().NotBeNull();
         language!.IsLogicalDelete.Should().Be(1);
-        language.CdUserUpdateAud.Should().NotBeNull();
-        language.CdUserUpdateAud.Should().Be(userId);
-        language.DtUserUpdateAud.Should().NotBeNull();
-        language.DtUserUpdateAud.Should().BeCloseTo(DateTime.Now, TimeSpan.FromMilliseconds(10000));
+        language.IdDeletedAud.Should().NotBeNull();
+        language.IdDeletedAud.Should().Be(userId);
+        language.DtDeletedAud.Should().NotBeNull();
+        language.DtDeletedAud.Should().BeCloseTo(DateTime.Now, TimeSpan.FromMilliseconds(10000));
     }
 }

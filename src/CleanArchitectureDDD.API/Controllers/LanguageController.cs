@@ -45,7 +45,7 @@ public class LanguageController : ApiControllerBase
     /// <returns></returns>
     /// <response code="200">Success create a new language. Returns language id</response>
     [HttpPost]
-    public async Task<ActionResult<long>> Create(CreateLanguageCommand command)
+    public async Task<ActionResult<Guid>> Create(CreateLanguageCommand command)
     {
         return await Mediator.Send(command);
     }
@@ -60,9 +60,9 @@ public class LanguageController : ApiControllerBase
     /// <response code="204">Success Update a Language</response>
     /// <response code="400">Language Id not found</response>
     [HttpPut("{id}")]
-    public async Task<ActionResult> Update(long id, UpdateLanguageCommand command)
+    public async Task<ActionResult> Update(Guid id, UpdateLanguageCommand command)
     {
-        if (id != command.CdLanguage)
+        if (id != command.Id)
         {
             return BadRequest();
         }
@@ -79,9 +79,9 @@ public class LanguageController : ApiControllerBase
     /// <response code="200">No response</response>
     /// <response code="204">Success Delete Language</response>
     [HttpDelete("{id}")]
-    public async Task<ActionResult> Delete(int id)
+    public async Task<ActionResult> Delete(Guid id)
     {
-        await Mediator.Send(new DeleteLanguageCommand { CdLanguage = id });
+        await Mediator.Send(new DeleteLanguageCommand(id));
 
         return NoContent();
     }

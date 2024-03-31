@@ -1,13 +1,12 @@
 ﻿using System.Diagnostics;
 using CleanArchitectureDDD.Application.Common.Interfaces;
-using MediatR;
-using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
 
 namespace CleanArchitectureDDD.Application.Common.Behaviours;
 
 public class PerformanceBehaviour<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse> 
-    where TRequest : IRequest<TResponse>
+    where TRequest : notnull
 {
     private readonly Stopwatch _timer;
     private readonly IMetricReporterService _metricReporterService;
@@ -23,10 +22,7 @@ public class PerformanceBehaviour<TRequest, TResponse> : IPipelineBehavior<TRequ
         _httpContextAccessor = httpContextAccessor;
     }
 
-    public async Task<TResponse> Handle(
-        TRequest request, 
-        CancellationToken cancellationToken, 
-        RequestHandlerDelegate<TResponse> next)
+    public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
     {
         var path = _httpContextAccessor.HttpContext?.Request.Path.Value;
         if (path == "/metrics" || path == null)

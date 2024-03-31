@@ -7,30 +7,32 @@ using NUnit.Framework;
 using System.Threading.Tasks;
 using System.Threading;
 using MediatR;
+using System;
 
 namespace Application.UnitTests.Common.Behaviours;
 
 public class RequestLoggerTests
 {
     private Mock<ILogger<CreateLanguageCommand>> _logger = null!;
-    private Mock<ICurrentUserService> _currentUserService = null!;
+    private Mock<IUser> _currentUserService = null!;
 
     [SetUp]
     public void Setup()
     {
         _logger = new Mock<ILogger<CreateLanguageCommand>>();
-        _currentUserService = new Mock<ICurrentUserService>();
+        _currentUserService = new Mock<IUser>();
     }
 
     [Test]
     public async Task ShouldCallCurrentUserAsyncOnceIfAuthenticated()
     {
-        var userId = _currentUserService.Setup(x => x.UserId).Returns(1);
+        var idGuid  = Guid.NewGuid;
+        var userId = _currentUserService.Setup(x => x.Id).Returns(idGuid);
 
         var requestLogger = new LoggingBehaviour<CreateLanguageCommand>(_logger.Object, _currentUserService.Object);
 
         await requestLogger.Process(new CreateLanguageCommand { DsLanguage = "English", DsPrefix = "ENG" }, new CancellationToken());
 
-        userId.Equals(1);
+        userId.Equals(idGuid);
     }
 }

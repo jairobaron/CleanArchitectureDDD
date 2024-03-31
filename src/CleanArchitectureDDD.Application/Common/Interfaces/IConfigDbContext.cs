@@ -1,5 +1,4 @@
 ﻿using CleanArchitectureDDD.Domain.Entities;
-using Microsoft.EntityFrameworkCore;
 
 
 namespace CleanArchitectureDDD.Application.Common.Interfaces;

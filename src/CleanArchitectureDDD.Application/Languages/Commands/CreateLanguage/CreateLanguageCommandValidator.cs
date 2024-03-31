@@ -1,6 +1,4 @@
-﻿using FluentValidation;
-using Microsoft.EntityFrameworkCore;
-using CleanArchitectureDDD.Application.Common.Interfaces;
+﻿using CleanArchitectureDDD.Application.Common.Interfaces;
 
 namespace CleanArchitectureDDD.Application.Languages.Commands.CreateLanguage;
 

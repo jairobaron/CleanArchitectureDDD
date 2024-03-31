@@ -1,10 +1,6 @@
 ﻿namespace CleanArchitectureDDD.Domain.Events;
 
-public class OnStopAppEvent : BaseEvent
+public class OnStopAppEvent(string appName) : BaseEvent
 {
-    public OnStopAppEvent(string appName)
-    {
-        AppName = appName;
-    }
-    public string AppName { get; }
+    public string AppName { get; } = appName;
 }

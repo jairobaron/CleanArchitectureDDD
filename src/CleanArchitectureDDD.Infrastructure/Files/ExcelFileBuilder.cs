@@ -74,7 +74,7 @@ public class ExcelFileBuilder : IExcelFileBuilder
             }
 
             workbookPart.Workbook.Save();
-            Excel.Close();
+            Excel.Dispose();
         }
 
         return memoryStream.ToArray();

@@ -1,15 +1,12 @@
-﻿using CleanArchitectureDDD.Application.Common.Exceptions;
-using CleanArchitectureDDD.Application.Common.Interfaces;
-using CleanArchitectureDDD.Domain.Entities;
-using MediatR;
+﻿using CleanArchitectureDDD.Application.Common.Interfaces;
 
 namespace CleanArchitectureDDD.Application.Languages.Commands.UpdateLanguage;
 
 public record UpdateLanguageCommand : IRequest
 {
-    public long CdLanguage { get; set; }
-    public string? DsLanguage { get; set; }
-    public string? DsPrefix { get; set; }
+    public Guid Id { get; init; }
+    public string? DsLanguage { get; init; }
+    public string? DsPrefix { get; init; }
 }
 
 public class UpdateLanguageCommandHandler : IRequestHandler<UpdateLanguageCommand>
@@ -21,20 +18,15 @@ public class UpdateLanguageCommandHandler : IRequestHandler<UpdateLanguageComman
         _context = context;
     }
 
-    public async Task<Unit> Handle(UpdateLanguageCommand request, CancellationToken cancellationToken)
+    public async Task Handle(UpdateLanguageCommand request, CancellationToken cancellationToken)
     {
-        var entity = await _context.TbMtLanguage.FindAsync(new object[] { request.CdLanguage }, cancellationToken);
+        var entity = await _context.TbMtLanguage.FindAsync(new object[] { request.Id }, cancellationToken);
 
-        if (entity == null)
-        {
-            throw new NotFoundException(nameof(Language), request.CdLanguage);
-        }
+        Guard.Against.NotFound(request.Id, entity);
 
         entity.DsLanguage = request.DsLanguage;
         entity.DsPrefix = request.DsPrefix;
 
         await _context.SaveChangesAsync(cancellationToken);
-
-        return Unit.Value;
     }
 }
